@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 let users = ['one user']
-let hasError = false;
+let error = "";
 
 router.get('/', (req, res, next) => {
   res.render('pages/ta02', {
@@ -11,15 +11,16 @@ router.get('/', (req, res, next) => {
     activeTA03: true, // For HBS
     contentCSS: true, // For HBS,
     users,
-    hasError,
+    error,
   });
 });
 
 router.post('/addUser', (req, res, next) => {
+  error = "";
   const userToAdd = req.body.username;
   const isDuplicatedUser = users.includes(userToAdd)
   if (isDuplicatedUser) {
-    hasError = true;
+    error = "Duplicated Entry";
     res.redirect('/ta02/');
   } else {
     hasError = false;
@@ -30,9 +31,10 @@ router.post('/addUser', (req, res, next) => {
 });
 
 router.post('/removeUser', (req, res, next) => {
+  error = "";
   const userToDelete = req.body.username;
-  const hasUser = !users.includes(userToDelete)
-  hasError += !!hasUser
+  const hasUser = users.includes(userToDelete)
+  error = !hasUser ? "User do not exist" : "";
   users = users.filter((user) => user !== req.body.username)
   res.redirect('/ta02/');
 });
